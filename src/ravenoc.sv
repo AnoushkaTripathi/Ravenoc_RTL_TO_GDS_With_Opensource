@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module ravenoc import ravenoc_pkg::*; # (
+module ravenoc #(
   parameter bit [NoCSize-1:0] AXI_CDC_REQ = '1
 ) (
   input                [NoCSize-1:0] clk_axi,
@@ -37,21 +37,26 @@ module ravenoc import ravenoc_pkg::*; # (
   // Used only in tb to bypass cdc module
   input                [NoCSize-1:0] bypass_cdc
 );
+
+  // Import packages inside the body
+  import ravenoc_pkg::*;
+  import amba_axi_pkg::*;
+
   router_if ns_con  [(NoCCfgSzRows+1)*NoCCfgSzCols] ();
   router_if sn_con  [(NoCCfgSzRows+1)*NoCCfgSzCols] ();
   router_if we_con  [NoCCfgSzRows*(NoCCfgSzCols+1)] ();
   router_if ew_con  [NoCCfgSzRows*(NoCCfgSzCols+1)] ();
 
-  for(genvar x=0;x<NoCCfgSzRows;x++) begin : gen_noc_x_lines
-    for(genvar y=0;y<NoCCfgSzCols;y++) begin : gen_noc_y_collumns
-      localparam s_router_ports_t Router = router_ports(x,y);
-      localparam int LocalIdx = y+x*(NoCCfgSzCols);
-      localparam int NorthIdx = y+x*(NoCCfgSzCols);
-      localparam int SouthIdx = y+((x+1)*NoCCfgSzCols);
-      localparam int WestIdx  = y+(x*(NoCCfgSzCols+1));
-      localparam int EastIdx  = (y+1)+(x*(NoCCfgSzCols+1));
+  for (genvar x = 0; x < NoCCfgSzRows; x++) begin : gen_noc_x_lines
+    for (genvar y = 0; y < NoCCfgSzCols; y++) begin : gen_noc_y_columns
+      localparam s_router_ports_t Router = router_ports(x, y);
+      localparam int LocalIdx = y + x * (NoCCfgSzCols);
+      localparam int NorthIdx = y + x * (NoCCfgSzCols);
+      localparam int SouthIdx = y + ((x + 1) * NoCCfgSzCols);
+      localparam int WestIdx  = y + (x * (NoCCfgSzCols + 1));
+      localparam int EastIdx  = (y + 1) + (x * (NoCCfgSzCols + 1));
 
-      router_wrapper#(
+      router_wrapper #(
         .ROUTER_X_ID(x),
         .ROUTER_Y_ID(y),
         .CDC_REQUIRED(AXI_CDC_REQ[LocalIdx])
@@ -110,14 +115,13 @@ module ravenoc import ravenoc_pkg::*; # (
 
   function automatic s_router_ports_t router_ports(int x, int y);
     s_router_ports_t connected_ports;
-    connected_ports.north_req = (x > 0)                 ? 1 : 0; // First row
-    connected_ports.south_req = (x < (NoCCfgSzRows-1))  ? 1 : 0; // Last row
-    connected_ports.west_req  = (y > 0)                 ? 1 : 0; // First collumn
-    connected_ports.east_req  = (y < (NoCCfgSzCols-1))  ? 1 : 0; // Last collumn
+    connected_ports.north_req = (x > 0)                ? 1 : 0;
+    connected_ports.south_req = (x < (NoCCfgSzRows-1)) ? 1 : 0;
+    connected_ports.west_req  = (y > 0)                ? 1 : 0;
+    connected_ports.east_req  = (y < (NoCCfgSzCols-1)) ? 1 : 0;
     connected_ports.local_req = 0;
     return connected_ports;
   endfunction
-
 
 endmodule
 
@@ -130,8 +134,7 @@ module ravenoc_dummy (
     if (local_port == 0) begin
       recv.resp = '0;
       send.req  = '0;
-    end
-    else begin
+    end else begin
       recv.resp = '1;
       send.req  = '0;
     end
