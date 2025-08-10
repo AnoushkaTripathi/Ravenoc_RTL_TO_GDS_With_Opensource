@@ -1,94 +1,38 @@
-# ============================================================
-# User config for OpenLane - Ravenoc design
-# ============================================================
-
-# Name of the top-level module
+# Design name
 set ::env(DESIGN_NAME) ravenoc
 
-# Path to the directory containing this config.tcl
-set ::env(DESIGN_DIR) $::env(DESIGN_DIR)
+# Paths
+set ::env(DESIGN_HOME) $::env(OPENLANE_ROOT)/designs/$::env(DESIGN_NAME)
+set ::env(DESIGN_DIR)  $::env(DESIGN_HOME)/src
+set verilog_files ""
 
-# Include directories for headers
-set ::env(VERILOG_INCLUDE_DIRS) "\
-    $::env(DESIGN_DIR)/include \
-"
+# Explicit header includes
+lappend verilog_files \
+    $::env(DESIGN_DIR)/misc/ravenoc_defines.svh \
+    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_structs.svh \
+    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_axi_structs.svh \
+    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_axi_fnc.svh \
+    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_pkg.sv
 
-# List all RTL .sv files
-set ::env(VERILOG_FILES) "\
-    $::env(DESIGN_DIR)/ravenoc.sv \
-    $::env(DESIGN_DIR)/ravenoc_wrapper.sv \
-    $::env(DESIGN_DIR)/ni/async_gp_fifo.sv \
-    $::env(DESIGN_DIR)/ni/axi_csr.sv \
-    $::env(DESIGN_DIR)/ni/axi_slave_if.sv \
-    $::env(DESIGN_DIR)/ni/cdc_pkt.sv \
-    $::env(DESIGN_DIR)/ni/pkt_proc.sv \
-    $::env(DESIGN_DIR)/ni/router_wrapper.sv \
-    $::env(DESIGN_DIR)/router/fifo.sv \
-    $::env(DESIGN_DIR)/router/input_datapath.sv \
-    $::env(DESIGN_DIR)/router/input_module.sv \
-    $::env(DESIGN_DIR)/router/input_router.sv \
-    $::env(DESIGN_DIR)/router/output_module.sv \
-    $::env(DESIGN_DIR)/router/router_if.sv \
-    $::env(DESIGN_DIR)/router/router_ravenoc.sv \
-    $::env(DESIGN_DIR)/router/rr_arbiter.sv \
-    $::env(DESIGN_DIR)/router/vc_buffer.sv \
-"
+# Recursively find .sv in ravenoc
+foreach f [exec find $::env(DESIGN_DIR) -type f -iname "*.sv"] {
+    lappend verilog_files $f
+}
 
-# ============================================================
-# Floorplan & Placement settings
-# ============================================================
+# Recursively find .v in verilog-axi
+foreach f [exec find $::env(DESIGN_DIR)/router -type f -iname "*.sv"] {
+    lappend verilog_files $f
+}
 
-# Put all pins on the left
-set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
+# Recursively find .sv in misc
+foreach f [exec find $::env(DESIGN_DIR)/ni  -type f -iname "*.sv"] {
+    lappend verilog_files $f
+}
 
-# Reduce wasted space
-set ::env(TOP_MARGIN_MULT) 2
-set ::env(BOTTOM_MARGIN_MULT) 2
 
-# Absolute die size
-set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 90 120"
-set ::env(FP_CORE_UTIL) 45
-set ::env(PL_BASIC_PLACEMENT) {1}
+# Assign to OpenLane env var
+set ::env(VERILOG_FILES) $verilog_files
 
-set ::env(FP_IO_HLENGTH) 2
-set ::env(FP_IO_VLENGTH) 2
-
-# ============================================================
-# Power & Routing settings
-# ============================================================
-
-# Use efabless decap cells to solve LI density issues
-set ::env(DECAP_CELL) "\
-    sky130_fd_sc_hd__decap_3 \
-    sky130_fd_sc_hd__decap_4 \
-    sky130_fd_sc_hd__decap_6 \
-    sky130_fd_sc_hd__decap_8 \
-    sky130_ef_sc_hd__decap_12"
-
-# No power rings, limit to met4
-set ::env(DESIGN_IS_CORE) 0
-set ::env(RT_MAX_LAYER) {met4}
-
-# Power nets
-set ::env(VDD_NETS) [list {vccd1}]
-set ::env(GND_NETS) [list {vssd1}]
-
-# ============================================================
-# Misc settings
-# ============================================================
-
-# Skip KLayout checks during dev
-set ::env(RUN_KLAYOUT_XOR) 0
-set ::env(RUN_KLAYOUT_DRC) 0
-
-# Don’t buffer output ports
-set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) 0
-
-# Allow use of specific sky130 cells
-set ::env(SYNTH_READ_BLACKBOX_LIB) 1
-
-# Clock (set to none here)
-set ::env(CLOCK_TREE_SYNTH) 0
-set ::env(CLOCK_PORT) ""
-
+# Constraints and config files
+set ::env(SDC_FILE)   $::env(DESIGN_HOME)/base.sdc
+set ::env(CONFIG_TCL) $::env(DESIGN_HOME)/config.tcl
