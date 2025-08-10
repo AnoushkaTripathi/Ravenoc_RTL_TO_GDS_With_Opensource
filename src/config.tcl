@@ -38,6 +38,7 @@ set ::env(VERILOG_FILES) "\
     $::env(DESIGN_DIR)/router/vc_buffer.sv \
 "
 
+set ::env(SYNTH_HDL_FRONTEND) "slang"
 
 # ============================================================
 # Floorplan & Placement settings
