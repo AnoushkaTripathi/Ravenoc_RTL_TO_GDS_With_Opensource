@@ -5,15 +5,10 @@ set ::env(DESIGN_NAME) ravenoc
 set ::env(DESIGN_HOME) $::env(OPENLANE_ROOT)/designs/$::env(DESIGN_NAME)
 set ::env(DESIGN_DIR)  $::env(DESIGN_HOME)/src
 set verilog_files ""
-
-# Explicit header includes
-lappend verilog_files \
-    $::env(DESIGN_DIR)/misc/ravenoc_defines.svh \
-    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_structs.svh \
-    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_axi_structs.svh \
-    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_axi_fnc.svh \
-    $::env(DESIGN_DIR)/ravenoc/include/ravenoc_pkg.sv
-
+# 1. Include all header and package files FIRST
+foreach file [exec find $::env(DESIGN_DIR)/ravenoc/include -type f \( -iname "*.svh" -o -iname "*.sv" \) | sort] {
+    lappend verilog_files $file
+}
 # Recursively find .sv in ravenoc
 foreach f [exec find $::env(DESIGN_DIR) -type f -iname "*.sv"] {
     lappend verilog_files $f
