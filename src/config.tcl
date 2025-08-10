@@ -28,6 +28,12 @@ set ::env(VERILOG_FILES) $verilog_files
 
 # Constraints file
 set ::env(SDC_FILE) "$::env(DESIGN_DIR)/router/base.sdc"
+set ::env(DECAP_CELL) "\
+    sky130_fd_sc_hd__decap_3 \
+    sky130_fd_sc_hd__decap_4 \
+    sky130_fd_sc_hd__decap_6 \
+    sky130_fd_sc_hd__decap_8 \
+    sky130_ef_sc_hd__decap_12"
 
 # Clock config
 set ::env(CLOCK_PORT) "clk"
