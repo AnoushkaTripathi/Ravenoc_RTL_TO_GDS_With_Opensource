@@ -39,7 +39,7 @@ foreach file [exec find $::env(DESIGN_HOME) -type f -iname "*.sv" | sort] {
 }
 
 # Add all verilog-axi .v files
-foreach file [exec find $::env(DESIGN_HOME)/ni -type f -iname "*.v" | sort] {
+foreach file [exec find $::env(DESIGN_HOME)/ni -type f -iname "*.sv" | sort] {
     lappend verilog_files $file
 }
 
