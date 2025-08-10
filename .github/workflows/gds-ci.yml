@@ -13,16 +13,7 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-         - name: Clone OpenLane
-  run: git clone https://github.com/The-OpenROAD-Project/OpenLane.git openlane
 
-- name: Install Tcl in Docker and run GDS
-  run: |
-    docker run --rm --name ravenoc \
-      -v ${{ github.workspace }}:/ravenoc \
-      -w /ravenoc \
-      aignacio/ravenoc \
-      bash -c "apt-get update && apt-get install -y tcl && cd openlane && ./flow.tcl -design ravenoc"
 
 
       - name: Set up Docker
@@ -30,7 +21,16 @@ jobs:
 
       - name: Pull GDS build image
         run: docker pull aignacio/ravenoc
+      - name: Clone OpenLane
+        run: git clone https://github.com/The-OpenROAD-Project/OpenLane.git openlane
 
+      - name: Install Tcl in Docker and run GDS
+        run: |
+          docker run --rm --name ravenoc \
+          -v ${{ github.workspace }}:/ravenoc \
+          -w /ravenoc \
+          aignacio/ravenoc \
+          bash -c "apt-get update && apt-get install -y tcl && cd openlane && ./flow.tcl -design ravenoc"
       - name: Run RTL to GDS with PDK
         run: make gds
         env:
