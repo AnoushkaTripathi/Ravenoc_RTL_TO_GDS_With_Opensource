@@ -4,8 +4,8 @@
 
 # Platform and design names
 set ::env(PLATFORM) "sky130"
-set ::env(DESIGN_NICKNAME) "mpsoc"
-set ::env(DESIGN_NAME)     "mpsoc"
+set ::env(DESIGN_NICKNAME) "ravenoc"
+set ::env(DESIGN_NAME)     "ravenoc"
 
 # ========================================
 # Design Home Directory
