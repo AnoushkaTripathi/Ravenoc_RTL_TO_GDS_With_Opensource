@@ -47,7 +47,7 @@ def get_project_source(yaml):
         filename = "user_module_{}.v".format(wokwi_id)
         with open(os.path.join('src', filename), 'wb') as fh:
             fh.write(r.content)
-        return [filename, 'cells.v']
+        return [filename, 'ravenoc.sv']
 
     # else it's HDL, so check source files
     else:
