@@ -1,0 +1,33 @@
+name: RTL to GDS Flow
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  rtl-to-gds:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        run: docker --version
+
+      - name: Pull GDS build image
+        run: docker pull aignacio/ravenoc
+
+      - name: Run RTL to GDS with PDK
+        run: make gds
+        env:
+          PDK: sky130A
+
+      - name: Upload GDS results
+        uses: actions/upload-artifact@v4
+        with:
+          name: gds-output
+          path: openlane/runs/ravenoc/results/
+
