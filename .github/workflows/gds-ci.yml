@@ -55,7 +55,8 @@ jobs:
     # for debugging, show all the files
     - name: show files
       run: find runs/wokwi/
-
+    - name: Make configure.py executable
+      run: chmod +x configure.py
     - name: add summary
       run: ./configure.py --get-stats >> $GITHUB_STEP_SUMMARY
 
