@@ -25,6 +25,5 @@ jobs:
     - name: fetch Verilog and build config
     - name: Make configure.py executable
       run: chmod +x configure.py
-    - name: run python
-
+    - name: run configure
       run: ./configure.py --check-docs
