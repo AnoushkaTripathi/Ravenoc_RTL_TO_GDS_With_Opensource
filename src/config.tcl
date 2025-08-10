@@ -16,14 +16,26 @@ set verilog_includes {
 set ::env(VERILOG_INCLUDE_DIRS) $verilog_includes
 
 # Collect all RTL/SystemVerilog files
-set verilog_files {}
-foreach dir {"src" "include" "ni" "router"} {
-    if {[file isdirectory "$::env(DESIGN_DIR)/$dir"]} {
-        foreach f [exec find "$::env(DESIGN_DIR)/$dir" -type f \( -iname "*.sv" -o -iname "*.v" \)] {
-            lappend verilog_files $f
-        }
-    }
-}
+# List all RTL .sv files
+set ::env(VERILOG_FILES) "\
+    $::env(DESIGN_DIR)/ravenoc.sv \
+    $::env(DESIGN_DIR)/ravenoc_wrapper.sv \
+    $::env(DESIGN_DIR)/ni/async_gp_fifo.sv \
+    $::env(DESIGN_DIR)/ni/axi_csr.sv \
+    $::env(DESIGN_DIR)/ni/axi_slave_if.sv \
+    $::env(DESIGN_DIR)/ni/cdc_pkt.sv \
+    $::env(DESIGN_DIR)/ni/pkt_proc.sv \
+    $::env(DESIGN_DIR)/ni/router_wrapper.sv \
+    $::env(DESIGN_DIR)/router/fifo.sv \
+    $::env(DESIGN_DIR)/router/input_datapath.sv \
+    $::env(DESIGN_DIR)/router/input_module.sv \
+    $::env(DESIGN_DIR)/router/input_router.sv \
+    $::env(DESIGN_DIR)/router/output_module.sv \
+    $::env(DESIGN_DIR)/router/router_if.sv \
+    $::env(DESIGN_DIR)/router/router_ravenoc.sv \
+    $::env(DESIGN_DIR)/router/rr_arbiter.sv \
+    $::env(DESIGN_DIR)/router/vc_buffer.sv \
+"
 set ::env(VERILOG_FILES) $verilog_files
 
 # Constraints file
