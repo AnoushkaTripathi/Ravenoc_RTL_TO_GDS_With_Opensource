@@ -31,8 +31,9 @@ clean:
 	$(RUN_CMD) rm -rf run_dir $(OPENLANE_RUN)
 
 # 🔽 Run the RTL-to-GDS flow via OpenLane
+
 gds:
-	$(RUN_CMD) bash -c "cd openlane && ./flow.tcl -design ravenoc"
+	$(RUN_CMD) bash -c "apt-get update && apt-get install -y tcllib && cd openlane && ./flow.tcl -design ravenoc"
 
 # 🔼 Push the GDS to a GitHub artifacts folder or gh-pages (stub — replace with actual logic)
 push-gds:
