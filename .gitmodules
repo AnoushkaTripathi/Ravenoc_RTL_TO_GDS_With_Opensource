@@ -1,3 +1,6 @@
 [submodule "bus_arch_sv_pkg"]
 	path = bus_arch_sv_pkg
 	url = git@github.com:aignacio/bus_arch_sv_pkg.git
+[submodule "src"]
+	path = src
+	url = git@github.com:AnoushkaTripathi/Ravenoc_RTL_TO_GDS_With_Opensource.git
