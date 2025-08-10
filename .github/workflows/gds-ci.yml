@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+      - name: Clone OpenLane
+        run: git clone https://github.com/The-OpenROAD-Project/OpenLane.git openlane
 
       - name: Set up Docker
         run: docker --version
