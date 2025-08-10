@@ -32,7 +32,7 @@ clean:
 
 # 🔽 Run the RTL-to-GDS flow via OpenLane
 gds:
-	$(RUN_CMD) bash -c "cd openlane && flow.tcl -design $(DESIGN_NAME)"
+	$(RUN_CMD) bash -c "cd openlane && ./flow.tcl -design ravenoc"
 
 # 🔼 Push the GDS to a GitHub artifacts folder or gh-pages (stub — replace with actual logic)
 push-gds:
