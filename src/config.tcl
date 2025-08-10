@@ -1,65 +1,39 @@
-# ========================================
-# Platform and Design
-# ========================================
-set ::env(PLATFORM)        "sky130"
-set ::env(DESIGN_NICKNAME) "ravenoc"
-set ::env(DESIGN_NAME)     "ravenoc"
+# ==============================================
+# Ravenoc OpenLane Config (GitHub Actions Friendly)
+# ==============================================
 
-# ========================================
-# Directories
-# ========================================
-set ::env(DESIGN_HOME) "/work"        ;# repo root in container
-set ::env(DESIGN_DIR)  $::env(DESIGN_HOME)
+# Platform and design name
+set ::env(PLATFORM) "sky130hd"
+set ::env(DESIGN_NAME) "ravenoc"
 
-# ========================================
-# Verilog Include Directories
-# ========================================
-set verilog_includes [list \
-    "$::env(DESIGN_HOME)/include" \
-    "$::env(DESIGN_HOME)/ni" \
-    "$::env(DESIGN_HOME)/router" \
-]
+# Collect include directories (relative to DESIGN_DIR)
+set verilog_includes {
+    "$::env(DESIGN_DIR)/include"
+    "$::env(DESIGN_DIR)/src"
+    "$::env(DESIGN_DIR)/ni"
+    "$::env(DESIGN_DIR)/router"
+}
 set ::env(VERILOG_INCLUDE_DIRS) $verilog_includes
 
-# ========================================
-# Collect Verilog/SystemVerilog Files
-# ========================================
-set verilog_files [list \
-    "$::env(DESIGN_HOME)/include/ravenoc_defines.svh" \
-    "$::env(DESIGN_HOME)/include/ravenoc_structs.svh" \
-    "$::env(DESIGN_HOME)/include/ravenoc_axi_structs.svh" \
-    "$::env(DESIGN_HOME)/include/ravenoc_axi_fnc.svh" \
-    "$::env(DESIGN_HOME)/include/ravenoc_pkg.sv" \
-]
-
-# Add all .sv files from src/, ni/, router/
-foreach dir {"src" "ni" "router"} {
-    foreach file [exec find $::env(DESIGN_HOME)/$dir -type f -iname "*.sv" | sort] {
-        lappend verilog_files $file
+# Collect all RTL/SystemVerilog files
+set verilog_files {}
+foreach dir {"src" "include" "ni" "router"} {
+    if {[file isdirectory "$::env(DESIGN_DIR)/$dir"]} {
+        foreach f [exec find "$::env(DESIGN_DIR)/$dir" -type f \( -iname "*.sv" -o -iname "*.v" \)] {
+            lappend verilog_files $f
+        }
     }
 }
-
 set ::env(VERILOG_FILES) $verilog_files
 
-# ========================================
-# Constraints
-# ========================================
-if {[info exists ::env(FLOW_VARIANT)] && $::env(FLOW_VARIANT) eq "pos_slack"} {
-    set ::env(SDC_FILE) "$::env(DESIGN_HOME)/$::env(PLATFORM)/$::env(DESIGN_NICKNAME)/constraint_pos_slack.sdc"
-} else {
-    set ::env(SDC_FILE) "$::env(DESIGN_HOME)/$::env(PLATFORM)/$::env(DESIGN_NICKNAME)/constraint.sdc"
-}
+# Constraints file
+set ::env(SDC_FILE) "$::env(DESIGN_DIR)/router/base.sdc"
 
-# ========================================
-# Floorplanning
-# ========================================
-set ::env(CORE_UTILIZATION)       40
-set ::env(CORE_ASPECT_RATIO)      1
-set ::env(CORE_MARGIN)            2
-set ::env(PLACE_DENSITY_LB_ADDON) 0.20
+# Clock config
+set ::env(CLOCK_PORT) "clk"
+set ::env(CLOCK_PERIOD) "10.0"
 
-# ========================================
-# Flow Toggles
-# ========================================
-set ::env(ENABLE_DPO)       0
-set ::env(TNS_END_PERCENT)  100
+# Synthesis options
+set ::env(SYNTH_STRATEGY) "DELAY 0"
+set ::env(SYNTH_READ_BLACKBOX_LIB) 1
+
