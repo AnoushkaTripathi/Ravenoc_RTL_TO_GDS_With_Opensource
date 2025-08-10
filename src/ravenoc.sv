@@ -22,10 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module ravenoc
-  import amba_axi_pkg::*;
-  import ravenoc_pkg::*;
-#(
+module ravenoc import ravenoc_pkg::*; # (
   parameter bit [NoCSize-1:0] AXI_CDC_REQ = '1
 ) (
   input                [NoCSize-1:0] clk_axi,
@@ -110,7 +107,7 @@ module ravenoc
       end
     end
   end
-  /*verilator coverage_off*/
+
   function automatic s_router_ports_t router_ports(int x, int y);
     s_router_ports_t connected_ports;
     connected_ports.north_req = (x > 0)                 ? 1 : 0; // First row
@@ -120,16 +117,8 @@ module ravenoc
     connected_ports.local_req = 0;
     return connected_ports;
   endfunction
-  /*verilator coverage_on*/
-`ifndef NO_ASSERTIONS
-  initial begin
-    illegal_noc_col_sz : assert (NoCCfgSzRows == 1 ? (NoCCfgSzCols >= 2) : 1)
-    else $error("Invalid NoC PARAM: NoC Col (y) size should be >= 2 if Row == 1!");
 
-    illegal_noc_row_sz : assert (NoCCfgSzCols == 1 ? (NoCCfgSzRows >= 2) : 1)
-    else $error("Invalid NoC PARAM: NoC RoW (x) size should be >= 2 if Col == 1!");
-  end
-`endif
+
 endmodule
 
 module ravenoc_dummy (
@@ -148,23 +137,3 @@ module ravenoc_dummy (
     end
   end
 endmodule
-
-//Check python NoC size - run.py
-//for x in range(noc_lines):
-    //for y in range(noc_collumns):
-        //if (y>0 and y<(noc_collumns-1)):
-            //print("-R-",end='');
-        //elif (y == 0):
-            //print("R-",end='');
-        //else:
-            //print("-R");
-//for x in range(noc_lines):
-    //for y in range(noc_collumns):
-        //if (y==0):
-            //print("##########");
-        //index_val["NorthIdx"] = y+(x*noc_collumns);
-        //index_val["SouthIdx"] = y+((x+1)*noc_collumns);
-        //index_val["WestIdx"] = y+(x*(noc_collumns+1));
-        //index_val["EastIdx"] = (y+1)+(x*(noc_collumns+1));
-        //print("Router ("+str(x)+","+str(y)+") ---> "+str(index_val));
-
