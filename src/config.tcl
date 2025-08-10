@@ -36,7 +36,6 @@ set ::env(VERILOG_FILES) "\
     $::env(DESIGN_DIR)/router/rr_arbiter.sv \
     $::env(DESIGN_DIR)/router/vc_buffer.sv \
 "
-set ::env(VERILOG_FILES) $verilog_files
 
 # Constraints file
 set ::env(SDC_FILE) "$::env(DESIGN_DIR)/router/base.sdc"
