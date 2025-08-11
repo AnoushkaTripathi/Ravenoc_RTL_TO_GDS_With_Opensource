@@ -53,17 +53,7 @@ jobs:
             $OPENLANE_IMAGE_NAME \
             /bin/bash -c "./flow.tcl -verbose 2 -overwrite -design /work/src -run_path /work/runs -tag wokwi"
 
-Changes made:
 
-    Removed the > YAML multiline literal for the command (use | so each line stays separate in Bash and variables expand reliably).
-
-    Escaped the line breaks with \ so Docker sees it as one continuous command.
-
-    Removed the # 👈 comment from inside the command (comments inside commands can mess up YAML parsing and cause variables to disappear).
-     
-
-
-    # for debugging, show all the files
     - name: show files
       run: find runs/wokwi/
 
